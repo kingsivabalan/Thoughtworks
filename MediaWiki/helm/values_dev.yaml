@@ -1,0 +1,22 @@
+#dockerImage: ""
+#dockerTag: 0.01
+replicas: 2
+cpuTargetPercentage: 50
+ingress:
+  name: mediawiki
+  # This will need to be set at deploy time as it differs from environment to environment
+  domain: "dev.platform.net"
+  subdomain: platform
+  cluster: dev
+
+  # Mark ssl as true to enable SSL on this service
+  ssl: true
+  metric: true
+  access_policy: 'public'
+# Change below value if you want to deploy the application in a different namespace
+namespace: mediawiki-dev
+resources:
+  requests:
+    memory: 2Gi
+    cpu: 300m
+environment: dev
