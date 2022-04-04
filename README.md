@@ -20,9 +20,9 @@ Tools that are used for Onboarding the application
  - Helm
 
 ### Guidelines to use the helm chart
- - Dockerfile : File to create the docker image of the application code
- - Azurepipeline.yaml : Azure DevOps build pipeline file to dockerize the code
- - [values_dev.yaml](./MediaWiki/helm/values_dev.yaml) : File that passes the variables to the yamls in helm templates folder. Variables will also be passed through build & release pipeline through Azure DevOps
+ - [Dockerfile](./MediaWiki/dockerfile) : File to create the docker image of the application code
+ - [azurepipeline.yaml](./azure-pipelines.yml) : Azure DevOps build pipeline file to dockerize the code
+ - [Values.yaml](./MediaWiki/helm/values_dev.yaml) : File that passes the variables to the yamls in helm templates folder. Variables will also be passed through build & release pipeline through Azure DevOps
 
 
 ### Note 
