@@ -1,0 +1,13 @@
+FROM openjdk:8-jre-alpine
+
+COPY target/mediawiki.jar app.jar
+
+RUN addgroup -g 1001 -S ca && adduser -u 1001 -S ca -G ca
+RUN chown -R ca:ca app.jar
+USER ca
+
+ARG build_no
+ENV app_version=$build_no
+
+# run application with this command line 
+CMD ["/usr/bin/java", "-Xms2048M", "-Xmx7892M", "-jar", "app.jar"]
