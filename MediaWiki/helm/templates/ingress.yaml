@@ -23,14 +23,14 @@ metadata:
   {{- end }}
 spec:
   rules:
-    - host: {{ .Values.ingress.name }}.{{ .Values.ingress.cluster }}.{{ .Values.ingress.subdomain }}.mnscorp.net
+    - host: {{ .Values.ingress.name }}.{{ .Values.ingress.cluster }}.{{ .Values.ingress.subdomain }}.net
       http:
         paths:
           - path: /
             backend:
               serviceName: {{ template "fullname" . }}
               servicePort: http
-    - host: {{ .Values.ingress.name }}.pre-live.{{ .Values.ingress.cluster }}.{{ .Values.ingress.subdomain }}.mnscorp.net
+    - host: {{ .Values.ingress.name }}.pre-live.{{ .Values.ingress.cluster }}.{{ .Values.ingress.subdomain }}.net
       http:
         paths:
           - path: /
