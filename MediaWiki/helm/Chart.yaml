@@ -1,0 +1,10 @@
+apiVersion: v1
+name: helm-mediawiki
+version: 1
+description: MediaWiki package
+home: 
+sources:
+  - 
+maintainers:
+  - name: MediaWiki Support team
+    email: supportteam@mediawiki.net
