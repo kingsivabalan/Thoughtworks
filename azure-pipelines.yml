@@ -1,0 +1,89 @@
+name: $(Rev:r)
+variables:
+ repositoryName: 'Thoughtworks'
+ runNumber : $(Build.BuildNumber)
+
+#Trigger for Development
+trigger:
+ branches:
+   include:
+     - development
+#Trigger checks for PR
+pr: 
+ branches:
+    include:
+      - development
+pool:
+  vmImage: 'ubuntu-latest'
+#Stages of pipeline
+stages:
+  - stage: 'Build'
+    displayName: 'Build and Test Stage'
+    jobs:
+      - job: 'UnitTesting'
+        steps:
+          - script: echo 'Running unit tests'
+          - script: pwd
+          
+          - task: DownloadSecureFile@1
+            inputs:
+              secureFile: 'settings.xml'
+          
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: '$(Agent.TempDirectory)'
+              Contents: 'settings.xml'
+              TargetFolder: '/home/vsts/.m2/'
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.SourcesDirectory)/helm'
+              ArtifactName: helm
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(build.artifactstagingdirectory)'
+              ArtifactName: drop
+    
+        continueOnError: false
+        displayName: 'Build and Test'
+        
+# Docker Stage
+  - stage: 'DockerizeDeploy'
+    dependsOn: Build
+    condition: succeeded()
+    displayName: 'Image Creation'
+    jobs:
+      - job: 'CreateImage'
+        steps:
+          - script: |
+                   echo Current dir is `pwd`
+          - task: HelmInstaller@1
+            inputs:
+              helmVersionToInstall: '3.5.0'
+          
+          - task: DownloadBuildArtifacts@0
+            inputs:
+               buildType: 'current'
+               downloadType: 'single'
+               artifactName: 'drop'
+               downloadPath: '.'
+        
+          - script: echo 'Creating Docker Image'
+          - script: mv drop/$(repositoryName).jar .
+          
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'mediawikiregistry'
+              repository: '$(repositoryName)'
+              command: 'build'
+              Dockerfile: 'dockerfile'
+              tags: 'R$(runNumber)'
+              arguments: '--build-arg build_no=$(runNumber)'
+
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'mediawikiregistry'
+              repository: '$(repositoryName)'
+              command: 'push'
+              tags: 'R$(runNumber)'
+              
+        displayName: 'Docker Image Creation'
